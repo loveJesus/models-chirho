@@ -44,7 +44,7 @@ bun run validate-chirho
 ### 4. Train Models
 
 ```bash
-# Train classifier (DeBERTa-v3-large, ~2-4 hrs on M4 Pro)
+# Train classifier (RoBERTa-large, ~2-4 hrs on M4 Pro)
 python src-chirho/train-chirho/train-classifier-chirho.py
 
 # Train embedder (MiniLM-L12, ~20 min)
@@ -65,7 +65,7 @@ python src-chirho/inference-chirho/demo-chirho.py
 
 | Model | Base | Task | VRAM |
 |-------|------|------|------|
-| Classifier | DeBERTa-v3-large | Multi-label classification | ~10GB |
+| Classifier | RoBERTa-large | Multi-label classification | ~10GB |
 | Embedder | MiniLM-L12-v2 | Contrastive embeddings | ~2GB |
 | Explainer | Flan-T5-base | Explanation generation | ~8GB |
 

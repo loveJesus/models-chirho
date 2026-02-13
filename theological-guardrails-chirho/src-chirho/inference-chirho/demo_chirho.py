@@ -159,7 +159,7 @@ This AI system classifies theological statements as **orthodox**, **heterodox**,
 6. **Constantinople III** (681 AD) - Two wills in Christ
 
 ## Three-Model Pipeline
-1. **Classifier** (DeBERTa-v3-large) - Multi-label classification
+1. **Classifier** (RoBERTa-large) - Multi-label classification
 2. **Embedder** (MiniLM-L12) - Theological embedding space
 3. **Explainer** (Flan-T5-base) - Natural language explanations
 
@@ -189,7 +189,7 @@ def model_info_chirho() -> str:
     return f"""## Model Status
 | Model | Status | Architecture |
 | --- | --- | --- |
-| Classifier | {classifier_status_chirho} | DeBERTa-v3-large |
+| Classifier | {classifier_status_chirho} | RoBERTa-large |
 | Embedder | {embedder_status_chirho} | MiniLM-L12 |
 | Explainer | {explainer_status_chirho} | Flan-T5-base |
 

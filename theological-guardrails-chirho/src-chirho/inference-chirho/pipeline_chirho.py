@@ -2,9 +2,9 @@
 # that whoever believes in him should not perish but have eternal life. - John 3:16
 
 """
-pipeline-chirho.py
+pipeline_chirho.py
 Unified inference pipeline that combines all three models:
-1. Classifier (DeBERTa-v3-large) - multi-label classification
+1. Classifier (RoBERTa-large) - multi-label classification
 2. Embedder (MiniLM-L12) - theological embedding similarity
 3. Explainer (Flan-T5-base) - natural language explanation
 """
@@ -86,7 +86,7 @@ class TheologianPipelineChirho:
         self._compute_orthodox_centroid_chirho()
 
     def _load_classifier_chirho(self, path_chirho: str | Path | None = None):
-        """Load the DeBERTa classifier."""
+        """Load the RoBERTa classifier."""
         model_path_chirho = Path(path_chirho) if path_chirho else MODELS_DIR_CHIRHO / "classifier-chirho" / "best-chirho"
         if not model_path_chirho.exists():
             print(f"  Classifier not found at {model_path_chirho}")

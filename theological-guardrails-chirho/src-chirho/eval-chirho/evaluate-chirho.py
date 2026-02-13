@@ -42,9 +42,9 @@ def load_test_data_chirho() -> list[dict]:
 
 
 def assess_classifier_chirho(config_chirho: dict, test_data_chirho: list[dict]):
-    """Assess the DeBERTa classifier on the test set."""
+    """Assess the RoBERTa-large classifier on the test set."""
     print("\n" + "=" * 60)
-    print("CLASSIFIER ASSESSMENT (DeBERTa-v3-large)")
+    print("CLASSIFIER ASSESSMENT (RoBERTa-large)")
     print("=" * 60)
 
     classifier_config_chirho = config_chirho["classifier_chirho"]
@@ -189,6 +189,88 @@ def assess_embedder_chirho(config_chirho: dict, test_data_chirho: list[dict]):
         print("  WARN: Embeddings need more training")
 
 
+def assess_explainer_chirho(config_chirho: dict, test_data_chirho: list[dict]):
+    """Assess the Flan-T5-base explainer on a sample of test examples."""
+    print("\n" + "=" * 60)
+    print("EXPLAINER ASSESSMENT (Flan-T5-base)")
+    print("=" * 60)
+
+    explainer_config_chirho = config_chirho["explainer_chirho"]
+    model_path_chirho = MODELS_DIR_CHIRHO / "explainer-chirho" / "best-chirho"
+
+    if not model_path_chirho.exists():
+        print(f"  Model not found at {model_path_chirho}. Train first.")
+        return
+
+    from transformers import AutoModelForSeq2SeqLM
+
+    tokenizer_chirho = AutoTokenizer.from_pretrained(str(model_path_chirho))
+    model_chirho = AutoModelForSeq2SeqLM.from_pretrained(str(model_path_chirho))
+
+    if torch.backends.mps.is_available():
+        device_chirho = torch.device("mps")
+    elif torch.cuda.is_available():
+        device_chirho = torch.device("cuda")
+    else:
+        device_chirho = torch.device("cpu")
+
+    model_chirho.to(device_chirho)
+
+    # Sample heterodox examples that have explanations
+    samples_chirho = [
+        ex_chirho for ex_chirho in test_data_chirho
+        if ex_chirho.get("explanation_chirho") and ex_chirho.get("label_chirho") == "heterodox"
+    ][:20]
+
+    if not samples_chirho:
+        print("  No test examples with explanations found.")
+        return
+
+    print(f"  Evaluating on {len(samples_chirho)} samples with reference explanations...\n")
+
+    generated_count_chirho = 0
+    for i_chirho, example_chirho in enumerate(samples_chirho[:10]):
+        text_chirho = example_chirho.get("text_chirho", "")
+        label_chirho = example_chirho.get("label_chirho", "")
+        heresy_types_chirho = example_chirho.get("heresy_types_chirho", [])
+        ref_explanation_chirho = example_chirho.get("explanation_chirho", "")
+
+        heresy_str_chirho = ", ".join(heresy_types_chirho) if heresy_types_chirho else "none"
+        input_text_chirho = (
+            f"explain theological classification: {text_chirho} | "
+            f"label: {label_chirho} | "
+            f"heresy types: {heresy_str_chirho}"
+        )
+
+        inputs_chirho = tokenizer_chirho(
+            input_text_chirho,
+            return_tensors="pt",
+            max_length=explainer_config_chirho["max_input_length_chirho"],
+            truncation=True,
+        )
+        inputs_chirho = {k_chirho: v_chirho.to(device_chirho) for k_chirho, v_chirho in inputs_chirho.items()}
+
+        with torch.no_grad():
+            outputs_chirho = model_chirho.generate(
+                **inputs_chirho,
+                max_length=explainer_config_chirho["max_output_length_chirho"],
+                num_beams=4,
+                early_stopping=True,
+            )
+
+        generated_chirho = tokenizer_chirho.decode(outputs_chirho[0], skip_special_tokens=True)
+        generated_count_chirho += 1
+
+        print(f"  [{i_chirho+1}] Text: {text_chirho[:80]}...")
+        print(f"      Heresies: {heresy_str_chirho}")
+        print(f"      Reference: {ref_explanation_chirho[:120]}...")
+        print(f"      Generated: {generated_chirho[:120]}...")
+        print()
+
+    print(f"  Generated {generated_count_chirho} explanations for manual review.")
+    print("  (Explainer quality is best assessed by human review of theological accuracy)")
+
+
 def main_chirho():
     """Run full assessment pipeline."""
     print("Theological Guardrails - Full Assessment")
@@ -200,6 +282,7 @@ def main_chirho():
 
     assess_classifier_chirho(config_chirho, test_data_chirho)
     assess_embedder_chirho(config_chirho, test_data_chirho)
+    assess_explainer_chirho(config_chirho, test_data_chirho)
 
     print("\n" + "=" * 60)
     print("Assessment complete!")

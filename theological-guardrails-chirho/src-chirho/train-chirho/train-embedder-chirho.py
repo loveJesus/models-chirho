@@ -235,7 +235,11 @@ def main_chirho():
     # Quick evaluation
     print("\nFinal evaluation:")
     final_score_chirho = evaluator_chirho(model_chirho)
-    print(f"  Embedding similarity score: {final_score_chirho:.4f}")
+    if isinstance(final_score_chirho, dict):
+        for key_chirho, val_chirho in final_score_chirho.items():
+            print(f"  {key_chirho}: {val_chirho:.4f}")
+    else:
+        print(f"  Embedding similarity score: {final_score_chirho:.4f}")
 
 
 if __name__ == "__main__":

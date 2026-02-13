@@ -4,7 +4,7 @@
 # Training configuration for theological guardrails pipeline
 
 classifier_chirho:
-  model_name_chirho: "microsoft/deberta-v3-large"
+  model_name_chirho: "roberta-large"  # DeBERTa-v3 has MPS gradient explosion; RoBERTa-large is MPS-stable
   num_labels_chirho: 13  # orthodox + 12 heresy types
   labels_chirho:
     - "orthodox_chirho"

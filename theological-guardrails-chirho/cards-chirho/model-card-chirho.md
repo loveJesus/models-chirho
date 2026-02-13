@@ -25,7 +25,7 @@ A three-model AI pipeline for classifying theological statements as **orthodox**
 
 | Model | Architecture | Task |
 |-------|-------------|------|
-| `theologian-classifier-chirho` | DeBERTa-v3-large | Multi-label heresy classification |
+| `theologian-classifier-chirho` | RoBERTa-large | Multi-label heresy classification |
 | `theologian-embedder-chirho` | MiniLM-L12-v2 | Theological embedding space |
 | `theologian-explainer-chirho` | Flan-T5-base | Natural language explanations |
 
@@ -71,7 +71,7 @@ print(result.explanation_chirho)      # "This statement reflects Arianism..."
 
 ## Training
 
-- **Classifier**: Fine-tuned DeBERTa-v3-large with multi-label head, BCELoss
+- **Classifier**: Fine-tuned RoBERTa-large with multi-label head, BCELoss
 - **Embedder**: Contrastive learning with triplet loss on MiniLM-L12
 - **Explainer**: Fine-tuned Flan-T5-base for instruction-following explanation
 
@@ -85,7 +85,7 @@ MIT
 @misc{lovejesus2025theologicanguardrails,
   title={Theological Guardrails: AI-Powered Orthodox Doctrine Classification},
   author={loveJesus},
-  year={2025},
+  year={2026},
   publisher={HuggingFace},
   url={https://huggingface.co/loveJesus/theologian-classifier-chirho}
 }

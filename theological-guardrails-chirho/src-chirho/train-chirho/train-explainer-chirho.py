@@ -8,6 +8,7 @@ of why a statement is heterodox, citing relevant creeds and scripture.
 """
 
 import json
+import sys
 from pathlib import Path
 
 import torch
@@ -193,12 +194,21 @@ def main_chirho():
         train_dataset=train_dataset_chirho,
         eval_dataset=val_dataset_chirho,
         data_collator=data_collator_chirho,
-        tokenizer=tokenizer_chirho,
+        processing_class=tokenizer_chirho,
     )
 
-    # Train
+    # Train (supports --resume to continue from last checkpoint)
+    resume_from_chirho = None
+    if "--resume" in sys.argv:
+        checkpoints_chirho = sorted(OUTPUT_DIR_CHIRHO.glob("checkpoint-*"))
+        if checkpoints_chirho:
+            resume_from_chirho = str(checkpoints_chirho[-1])
+            print(f"\nResuming from checkpoint: {resume_from_chirho}")
+        else:
+            print("\nNo checkpoint found, starting fresh.")
+
     print(f"\nStarting training for {explainer_config_chirho['num_epochs_chirho']} epochs...")
-    train_result_chirho = trainer_chirho.train()
+    train_result_chirho = trainer_chirho.train(resume_from_checkpoint=resume_from_chirho)
 
     print("\nTraining complete!")
     print(f"  Training loss: {train_result_chirho.training_loss:.4f}")

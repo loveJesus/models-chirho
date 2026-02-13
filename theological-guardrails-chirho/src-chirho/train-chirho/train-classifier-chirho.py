@@ -3,13 +3,18 @@
 
 """
 train-classifier-chirho.py
-Fine-tunes DeBERTa-v3-large for multi-label theological statement classification.
+Fine-tunes RoBERTa-large for multi-label theological statement classification.
 Supports MPS (Apple Silicon) for local training on M4 Pro.
 Optimized with dynamic padding for 3-5x faster training.
+
+Note: DeBERTa-v3 (large and base) has gradient explosion on MPS due to
+disentangled attention numerical instability. RoBERTa-large is MPS-stable
+with comparable performance.
 """
 
 import json
 import os
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -115,7 +120,7 @@ def compute_metrics_chirho(eval_pred_chirho):
 def main_chirho():
     """Main training loop for the theological classifier."""
     print("=" * 60)
-    print("Theological Classifier Training (DeBERTa-v3-large)")
+    print("Theological Classifier Training (RoBERTa-large)")
     print("=" * 60)
 
     config_chirho = load_config_chirho()
@@ -142,7 +147,7 @@ def main_chirho():
 
     # Load tokenizer and model
     print("\nLoading tokenizer and model...")
-    tokenizer_chirho = AutoTokenizer.from_pretrained(model_name_chirho, use_fast=False)
+    tokenizer_chirho = AutoTokenizer.from_pretrained(model_name_chirho)
     model_chirho = AutoModelForSequenceClassification.from_pretrained(
         model_name_chirho,
         num_labels=num_labels_chirho,
@@ -211,9 +216,18 @@ def main_chirho():
         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
     )
 
-    # Train
+    # Train (supports --resume to continue from last checkpoint)
+    resume_from_chirho = None
+    if "--resume" in sys.argv:
+        checkpoints_chirho = sorted(OUTPUT_DIR_CHIRHO.glob("checkpoint-*"))
+        if checkpoints_chirho:
+            resume_from_chirho = str(checkpoints_chirho[-1])
+            print(f"\nResuming from checkpoint: {resume_from_chirho}")
+        else:
+            print("\nNo checkpoint found, starting fresh.")
+
     print("\nStarting training...")
-    train_result_chirho = trainer_chirho.train()
+    train_result_chirho = trainer_chirho.train(resume_from_checkpoint=resume_from_chirho)
 
     print("\nTraining complete!")
     print(f"  Training loss: {train_result_chirho.training_loss:.4f}")
