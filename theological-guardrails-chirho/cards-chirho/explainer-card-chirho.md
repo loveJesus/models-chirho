@@ -1,7 +1,6 @@
-<!-- For God so loved the world that he gave his only begotten Son, -->
-<!-- that whoever believes in him should not perish but have eternal life. - John 3:16 -->
-
 ---
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
 license: mit
 language:
   - en
@@ -12,7 +11,7 @@ tags:
   - flan-t5
 datasets:
   - loveJesus/theologian-dataset-chirho
-pipeline_tag: text2text-generation
+pipeline_tag: text-generation
 ---
 
 # Theologian Explainer (theologian-explainer-chirho)
