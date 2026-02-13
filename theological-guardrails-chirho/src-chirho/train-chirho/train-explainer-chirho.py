@@ -134,13 +134,11 @@ def main_chirho():
             examples_chirho["input_text_chirho"],
             max_length=max_input_len_chirho,
             truncation=True,
-            padding="max_length",
         )
         labels_chirho = tokenizer_chirho(
-            examples_chirho["target_text_chirho"],
+            text_target=examples_chirho["target_text_chirho"],
             max_length=max_output_len_chirho,
             truncation=True,
-            padding="max_length",
         )
         model_inputs_chirho["labels"] = labels_chirho["input_ids"]
         return model_inputs_chirho
@@ -171,7 +169,7 @@ def main_chirho():
         per_device_train_batch_size=explainer_config_chirho["batch_size_chirho"],
         per_device_eval_batch_size=explainer_config_chirho["batch_size_chirho"],
         learning_rate=explainer_config_chirho["learning_rate_chirho"],
-        warmup_ratio=0.1,
+        warmup_steps=100,
         weight_decay=0.01,
         eval_strategy="epoch",
         save_strategy="epoch",

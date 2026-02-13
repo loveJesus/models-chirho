@@ -25,7 +25,7 @@ classifier_chirho:
   batch_size_chirho: 16
   warmup_ratio_chirho: 0.1
   weight_decay_chirho: 0.01
-  max_length_chirho: 512
+  max_length_chirho: 256
   loss_function_chirho: "binary_cross_entropy"
   device_chirho: "mps"  # Apple Silicon
 
