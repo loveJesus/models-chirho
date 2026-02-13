@@ -1,0 +1,105 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+# Training configuration for theological guardrails pipeline
+
+classifier_chirho:
+  model_name_chirho: "microsoft/deberta-v3-large"
+  num_labels_chirho: 13  # orthodox + 12 heresy types
+  labels_chirho:
+    - "orthodox_chirho"
+    - "arianism_chirho"
+    - "pelagianism_chirho"
+    - "gnosticism_chirho"
+    - "modalism_chirho"
+    - "docetism_chirho"
+    - "nestorianism_chirho"
+    - "marcionism_chirho"
+    - "apollinarianism_chirho"
+    - "monothelitism_chirho"
+    - "semi_pelagianism_chirho"
+    - "adoptionism_chirho"
+    - "patripassianism_chirho"
+  learning_rate_chirho: 2.0e-5
+  num_epochs_chirho: 10
+  batch_size_chirho: 16
+  warmup_ratio_chirho: 0.1
+  weight_decay_chirho: 0.01
+  max_length_chirho: 512
+  loss_function_chirho: "binary_cross_entropy"
+  device_chirho: "mps"  # Apple Silicon
+
+embedder_chirho:
+  model_name_chirho: "sentence-transformers/all-MiniLM-L12-v2"
+  embedding_dim_chirho: 384
+  learning_rate_chirho: 2.0e-5
+  num_epochs_chirho: 5
+  batch_size_chirho: 32
+  margin_chirho: 0.5  # Triplet loss margin
+  loss_function_chirho: "triplet_loss"
+  mining_strategy_chirho: "hard"
+  device_chirho: "mps"
+
+explainer_chirho:
+  model_name_chirho: "google/flan-t5-base"
+  learning_rate_chirho: 3.0e-5
+  num_epochs_chirho: 8
+  batch_size_chirho: 8
+  max_input_length_chirho: 512
+  max_output_length_chirho: 256
+  device_chirho: "mps"
+
+data_chirho:
+  seed_count_chirho: 500
+  augmented_count_chirho: 22500
+  train_split_chirho: 0.8
+  val_split_chirho: 0.1
+  test_split_chirho: 0.1
+  seed_dir_chirho: "data-chirho/seeds-chirho"
+  processed_dir_chirho: "data-chirho/processed-chirho"
+  raw_dir_chirho: "data-chirho/raw-chirho"
+
+orthodoxy_chirho:
+  # First SIX ecumenical councils define core orthodoxy
+  councils_chirho:
+    - name_chirho: "Nicaea I"
+      year_chirho: 325
+      key_doctrine_chirho: "Christ is God, consubstantial with the Father"
+      contra_chirho: "Arianism"
+    - name_chirho: "Constantinople I"
+      year_chirho: 381
+      key_doctrine_chirho: "Holy Spirit is God, full Trinitarian doctrine"
+      contra_chirho: "Pneumatomachianism"
+    - name_chirho: "Ephesus"
+      year_chirho: 431
+      key_doctrine_chirho: "Christ is one person, Mary is Theotokos"
+      contra_chirho: "Nestorianism"
+    - name_chirho: "Chalcedon"
+      year_chirho: 451
+      key_doctrine_chirho: "Christ has two natures, fully God and fully man"
+      contra_chirho: "Monophysitism"
+    - name_chirho: "Constantinople II"
+      year_chirho: 553
+      key_doctrine_chirho: "Reinforces Chalcedon, condemns Three Chapters"
+      contra_chirho: "Nestorianism, Origenism"
+    - name_chirho: "Constantinople III"
+      year_chirho: 681
+      key_doctrine_chirho: "Christ has two wills, divine and human"
+      contra_chirho: "Monothelitism"
+  # Council 7 (Nicaea II, 787) treated as historical position, not binding
+  denominational_distinctives_chirho:
+    - "predestination"
+    - "baptism_mode"
+    - "spiritual_gifts"
+    - "ecclesiology"
+    - "eschatology"
+    - "eucharist_presence"
+    - "marian_doctrines_post_ephesus"
+    - "sola_scriptura_vs_tradition"
+
+evaluation_chirho:
+  target_f1_chirho: 0.85
+  clear_heresy_f1_chirho: 0.90
+  subtle_variant_f1_chirho: 0.80
+  denominational_f1_chirho: 0.70
+  edge_case_count_chirho: 100

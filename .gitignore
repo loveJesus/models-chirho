@@ -1,0 +1,22 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+.env
+.env-chirho
+node_modules/
+bun.lockb
+__pycache__/
+*.pyc
+.venv/
+*.pt
+*.bin
+*.safetensors
+*.onnx
+models-chirho/*/best-chirho/
+models-chirho/*/checkpoint-*/
+dist/
+.DS_Store
+# Exclude generated dataset files but not source scripts in src-chirho/data-chirho/
+**/data-chirho/raw-chirho/
+**/data-chirho/processed-chirho/
+**/data-chirho/seeds-chirho/

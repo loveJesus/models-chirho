@@ -1,0 +1,17 @@
+{
+  "name": "theological-guardrails-chirho",
+  "version": "0.1.0",
+  "description": "Data collection and generation scripts for theological guardrails dataset",
+  "type": "module",
+  "scripts": {
+    "gather-creeds-chirho": "bun run src-chirho/data-chirho/gather-creeds-chirho.ts",
+    "gather-heresies-chirho": "bun run src-chirho/data-chirho/gather-heresies-chirho.ts",
+    "gather-scripture-chirho": "bun run src-chirho/data-chirho/gather-scripture-chirho.ts",
+    "seed-generator-chirho": "bun run src-chirho/data-chirho/seed-generator-chirho.ts",
+    "augment-chirho": "bun run src-chirho/data-chirho/augment-dataset-chirho.ts",
+    "validate-chirho": "bun run src-chirho/data-chirho/validate-dataset-chirho.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  }
+}
