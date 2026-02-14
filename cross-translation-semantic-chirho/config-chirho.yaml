@@ -1,0 +1,46 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+# Training configuration for cross-translation semantic embedding pipeline
+
+embedder_chirho:
+  model_name_chirho: "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+  task_chirho: "cross_translation_embedding"
+  embedding_dim_chirho: 384
+  learning_rate_chirho: 2.0e-5
+  num_epochs_chirho: 3
+  batch_size_chirho: 64
+  warmup_ratio_chirho: 0.1
+  loss_chirho: "CosineSimilarityLoss"
+  device_chirho: "auto"
+
+data_chirho:
+  source_chirho: "scrollmapper/bible_databases"
+  translations_chirho:
+    - code_chirho: "KJV"
+      name_chirho: "King James Version"
+      philosophy_chirho: "formal"
+    - code_chirho: "ASV"
+      name_chirho: "American Standard Version"
+      philosophy_chirho: "formal"
+    - code_chirho: "YLT"
+      name_chirho: "Young's Literal Translation"
+      philosophy_chirho: "literal"
+    - code_chirho: "Darby"
+      name_chirho: "Darby Bible"
+      philosophy_chirho: "literal"
+    - code_chirho: "AKJV"
+      name_chirho: "American King James Version"
+      philosophy_chirho: "formal"
+  max_total_pairs_chirho: 300000
+  train_split_chirho: 0.8
+  val_split_chirho: 0.1
+  test_split_chirho: 0.1
+  raw_dir_chirho: "data-chirho/raw-chirho"
+  processed_dir_chirho: "data-chirho/processed-chirho"
+
+evaluation_chirho:
+  positive_similarity_target_chirho: 0.85
+  negative_similarity_ceiling_chirho: 0.50
+  classification_accuracy_target_chirho: 0.90
+  roc_auc_target_chirho: 0.95

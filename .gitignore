@@ -12,8 +12,11 @@ __pycache__/
 *.bin
 *.safetensors
 *.onnx
+*.tar.gz
 models-chirho/*/best-chirho/
 models-chirho/*/checkpoint-*/
+**/models-chirho/*/best-chirho/
+**/models-chirho/*/checkpoint-*/
 dist/
 .DS_Store
 # Exclude generated dataset files but not source scripts in src-chirho/data-chirho/

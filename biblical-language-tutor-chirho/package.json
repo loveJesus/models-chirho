@@ -1,0 +1,16 @@
+{
+  "name": "biblical-language-tutor-chirho",
+  "version": "0.1.0",
+  "description": "Data pipeline scripts for biblical language tutor dataset (Hebrew/Greek morphology + glossing)",
+  "type": "module",
+  "scripts": {
+    "download-macula-chirho": "bun run src-chirho/data-chirho/download-macula-chirho.ts",
+    "download-morphgnt-chirho": "bun run src-chirho/data-chirho/download-morphgnt-chirho.ts",
+    "build-parser-chirho": "bun run src-chirho/data-chirho/build-parser-dataset-chirho.ts",
+    "build-glosser-chirho": "bun run src-chirho/data-chirho/build-glosser-dataset-chirho.ts",
+    "validate-chirho": "bun run src-chirho/data-chirho/validate-dataset-chirho.ts",
+    "download-all-chirho": "bun run src-chirho/data-chirho/download-macula-chirho.ts && bun run src-chirho/data-chirho/download-morphgnt-chirho.ts",
+    "build-all-chirho": "bun run src-chirho/data-chirho/build-parser-dataset-chirho.ts && bun run src-chirho/data-chirho/build-glosser-dataset-chirho.ts && bun run src-chirho/data-chirho/validate-dataset-chirho.ts"
+  },
+  "dependencies": {}
+}

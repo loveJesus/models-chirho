@@ -1,0 +1,41 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+[project]
+name = "biblical-entity-recognizer-chirho"
+version = "0.1.0"
+description = "DistilBERT-based NER model for recognizing biblical entities: persons, divine names, people groups, places, events, and artifacts"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "loveJesus", email = "loveJesus@perffection.com"}
+]
+
+dependencies = [
+    "transformers>=4.40",
+    "datasets>=2.19",
+    "torch>=2.3",
+    "accelerate>=0.30",
+    "seqeval>=1.2",
+    "numpy>=1.26",
+    "gradio>=4.0",
+    "pyyaml",
+    "safetensors",
+    "huggingface-hub>=0.23",
+    "python-dotenv",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+    "mypy",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

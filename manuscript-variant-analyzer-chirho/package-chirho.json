@@ -1,0 +1,14 @@
+{
+  "name": "manuscript-variant-analyzer-chirho",
+  "version": "0.1.0",
+  "description": "Data pipeline for NT manuscript variant classification using STEPBible TAGNT edition comparisons",
+  "type": "module",
+  "scripts": {
+    "download-tagnt-chirho": "bun run src-chirho/data-chirho/download-tagnt-chirho.ts",
+    "build-dataset-chirho": "bun run src-chirho/data-chirho/build-variant-dataset-chirho.ts",
+    "validate-chirho": "bun run src-chirho/data-chirho/validate-dataset-chirho.ts",
+    "download-all-chirho": "bun run src-chirho/data-chirho/download-tagnt-chirho.ts",
+    "build-all-chirho": "bun run src-chirho/data-chirho/build-variant-dataset-chirho.ts && bun run src-chirho/data-chirho/validate-dataset-chirho.ts"
+  },
+  "dependencies": {}
+}

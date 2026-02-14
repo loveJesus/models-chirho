@@ -1,0 +1,17 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+transformers>=4.40
+datasets>=2.19
+torch>=2.3
+numpy>=1.26
+accelerate>=0.30
+sentencepiece>=0.2
+protobuf>=4.25
+sacrebleu>=2.4
+bert-score>=0.3.13
+gradio>=4.0
+pyyaml
+safetensors
+huggingface-hub>=0.23
+python-dotenv

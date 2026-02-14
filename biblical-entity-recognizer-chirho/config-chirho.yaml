@@ -1,0 +1,43 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+ner_chirho:
+  model_name_chirho: "distilbert-base-uncased"
+  num_labels_chirho: 13
+  max_length_chirho: 128
+  learning_rate_chirho: 5.0e-5
+  num_epochs_chirho: 5
+  batch_size_chirho: 32
+  weight_decay_chirho: 0.01
+  warmup_ratio_chirho: 0.1
+  seed_chirho: 42
+
+  labels_chirho:
+    - "O"
+    - "B-PERSON"
+    - "I-PERSON"
+    - "B-DIVINE"
+    - "I-DIVINE"
+    - "B-PEOPLE_GROUP"
+    - "I-PEOPLE_GROUP"
+    - "B-PLACE"
+    - "I-PLACE"
+    - "B-EVENT"
+    - "I-EVENT"
+    - "B-ARTIFACT"
+    - "I-ARTIFACT"
+
+  entity_types_chirho:
+    - "PERSON"
+    - "DIVINE"
+    - "PEOPLE_GROUP"
+    - "PLACE"
+    - "EVENT"
+    - "ARTIFACT"
+
+evaluation_chirho:
+  target_f1_chirho: 0.80
+
+huggingface_chirho:
+  repo_id_chirho: "LoveJesus/biblical-entity-recognizer-chirho"
+  dataset_repo_id_chirho: "LoveJesus/biblical-ner-dataset-chirho"

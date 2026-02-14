@@ -1,0 +1,43 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+# Training configuration for manuscript variant analyzer pipeline
+
+classifier_chirho:
+  model_name_chirho: "google/mt5-small"
+  task_chirho: "variant_classification"
+  max_input_length_chirho: 256
+  max_target_length_chirho: 128
+  learning_rate_chirho: 3.0e-4
+  num_epochs_chirho: 5
+  batch_size_chirho: 32
+  warmup_steps_chirho: 500
+  weight_decay_chirho: 0.01
+  bf16_chirho: true
+  device_chirho: "auto"
+
+data_chirho:
+  source_chirho: "STEPBible TAGNT (Translators Amalgamated Greek NT)"
+  license_chirho: "CC BY 4.0"
+  editions_chirho:
+    - "NA27/28"
+    - "TR"
+    - "SBLGNT"
+    - "Byzantine"
+    - "WH"
+    - "THGNT"
+  variant_types_chirho:
+    - "substitution"
+    - "omission"
+    - "addition"
+    - "spelling"
+  max_per_type_chirho: 30000
+  train_split_chirho: 0.8
+  val_split_chirho: 0.1
+  test_split_chirho: 0.1
+  raw_dir_chirho: "data-chirho/raw-chirho"
+  processed_dir_chirho: "data-chirho/processed-chirho"
+
+evaluation_chirho:
+  exact_match_target_chirho: 0.75
+  type_accuracy_target_chirho: 0.90

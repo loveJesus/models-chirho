@@ -1,0 +1,15 @@
+{
+  "name": "biblical-entity-recognizer-chirho",
+  "version": "0.1.0",
+  "description": "Data pipeline for biblical NER dataset construction using TIPNR and KJV sources",
+  "type": "module",
+  "scripts": {
+    "download-tipnr-chirho": "bun run src-chirho/data-chirho/download-tipnr-chirho.ts",
+    "download-kjv-chirho": "bun run src-chirho/data-chirho/download-kjv-chirho.ts",
+    "download-all-chirho": "bun run src-chirho/data-chirho/download-tipnr-chirho.ts && bun run src-chirho/data-chirho/download-kjv-chirho.ts",
+    "build-dataset-chirho": "bun run src-chirho/data-chirho/build-ner-dataset-chirho.ts",
+    "validate-chirho": "bun run src-chirho/data-chirho/validate-dataset-chirho.ts",
+    "pipeline-chirho": "bun run download-all-chirho && bun run build-dataset-chirho && bun run validate-chirho"
+  },
+  "dependencies": {}
+}

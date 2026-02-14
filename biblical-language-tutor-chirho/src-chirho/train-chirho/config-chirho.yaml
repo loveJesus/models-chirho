@@ -1,0 +1,90 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+# Training configuration for biblical language tutor pipeline
+
+parser_chirho:
+  model_name_chirho: "google/mt5-small"
+  task_chirho: "morphological_parsing"
+  max_input_length_chirho: 192  # increased for transliteration in input
+  max_target_length_chirho: 128
+  learning_rate_chirho: 3.0e-4  # slightly higher for MPS convergence speed
+  num_epochs_chirho: 5  # optimized: early stopping handles convergence
+  batch_size_chirho: 64  # doubled for A100 80GB throughput
+  warmup_steps_chirho: 300  # reduced for faster warmup
+  weight_decay_chirho: 0.01
+  early_stopping_patience_chirho: 2  # stop promptly when plateaued
+  bf16_chirho: true  # A100 native bfloat16 support
+  device_chirho: "auto"  # auto-detects cuda/mps/cpu
+  max_eval_samples_chirho: 3000  # subsample eval for speed on MPS
+  max_train_samples_chirho: 150000  # subsample train for MPS (0 = use all)
+
+glosser_chirho:
+  model_name_chirho: "google/mt5-small"
+  task_chirho: "interlinear_glossing"
+  max_input_length_chirho: 512  # increased for Hebrew transliteration (long verses)
+  max_target_length_chirho: 256
+  learning_rate_chirho: 3.0e-4  # higher for faster MPS convergence
+  num_epochs_chirho: 6  # reduced, early stopping handles convergence
+  batch_size_chirho: 16  # doubled for A100 80GB throughput
+  warmup_steps_chirho: 200  # reduced for faster warmup
+  weight_decay_chirho: 0.01
+  early_stopping_patience_chirho: 2  # stop promptly when plateaued
+  bf16_chirho: true
+  device_chirho: "auto"
+  max_eval_samples_chirho: 2000  # subsample eval for speed on MPS
+
+data_chirho:
+  parser_total_chirho: 530000  # ~400K Hebrew + ~130K Greek
+  glosser_total_chirho: 31000  # ~23K OT + ~8K NT verses
+  train_split_chirho: 0.8
+  val_split_chirho: 0.1
+  test_split_chirho: 0.1
+  raw_dir_chirho: "data-chirho/raw-chirho"
+  processed_dir_chirho: "data-chirho/processed-chirho"
+
+morphology_tags_chirho:
+  classes_chirho:
+    - "verb"
+    - "noun"
+    - "adjective"
+    - "pronoun"
+    - "particle"
+    - "preposition"
+    - "conjunction"
+    - "adverb"
+    - "interjection"
+    - "article"
+    - "numeral"
+    - "suffix"
+  stems_chirho:  # Hebrew verbal stems
+    - "qal"
+    - "niphal"
+    - "piel"
+    - "pual"
+    - "hiphil"
+    - "hophal"
+    - "hithpael"
+  tenses_chirho:
+    - "perfect"
+    - "imperfect"
+    - "imperative"
+    - "infinitive_construct"
+    - "infinitive_absolute"
+    - "participle"
+    - "aorist"
+    - "present"
+    - "future"
+    - "pluperfect"
+  persons_chirho: ["1", "2", "3"]
+  genders_chirho: ["m", "f", "n", "c"]
+  numbers_chirho: ["s", "p", "d"]
+  cases_chirho: ["nom", "gen", "dat", "acc", "voc"]
+  voices_chirho: ["active", "middle", "passive"]
+  moods_chirho: ["indicative", "subjunctive", "optative", "imperative", "infinitive", "participle"]
+
+evaluation_chirho:
+  parser_exact_match_chirho: 0.75
+  parser_per_tag_f1_chirho: 0.90
+  glosser_bleu_chirho: 50
+  glosser_word_accuracy_chirho: 0.70

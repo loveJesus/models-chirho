@@ -1,0 +1,16 @@
+{
+  "name": "topical-passage-classifier-chirho",
+  "version": "0.1.0",
+  "description": "Data pipeline for topical Bible passage search model using Nave's and TSK cross-references",
+  "type": "module",
+  "scripts": {
+    "download-naves-chirho": "bun run src-chirho/data-chirho/download-naves-chirho.ts",
+    "download-kjv-chirho": "bun run src-chirho/data-chirho/download-kjv-chirho.ts",
+    "download-crossrefs-chirho": "bun run src-chirho/data-chirho/download-crossrefs-chirho.ts",
+    "download-all-chirho": "bun run src-chirho/data-chirho/download-naves-chirho.ts && bun run src-chirho/data-chirho/download-kjv-chirho.ts && bun run src-chirho/data-chirho/download-crossrefs-chirho.ts",
+    "build-dataset-chirho": "bun run src-chirho/data-chirho/build-topical-dataset-chirho.ts",
+    "validate-chirho": "bun run src-chirho/data-chirho/validate-dataset-chirho.ts",
+    "build-all-chirho": "bun run download-all-chirho && bun run build-dataset-chirho && bun run validate-chirho"
+  },
+  "dependencies": {}
+}

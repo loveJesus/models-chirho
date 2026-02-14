@@ -1,0 +1,30 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+# Training configuration for topical passage classifier pipeline
+
+embedder_chirho:
+  model_name_chirho: "sentence-transformers/all-MiniLM-L6-v2"
+  task_chirho: "topical_passage_search"
+  embedding_dim_chirho: 384
+  learning_rate_chirho: 2.0e-5
+  num_epochs_chirho: 5
+  batch_size_chirho: 64
+  warmup_ratio_chirho: 0.1
+  loss_chirho: "MultipleNegativesRankingLoss"
+  device_chirho: "auto"
+
+data_chirho:
+  sources_chirho:
+    - "Nave's Topical Bible (public domain)"
+    - "TSK Cross-References (OpenBible.info)"
+  max_training_pairs_chirho: 170000
+  train_split_chirho: 0.8
+  val_split_chirho: 0.1
+  test_split_chirho: 0.1
+  raw_dir_chirho: "data-chirho/raw-chirho"
+  processed_dir_chirho: "data-chirho/processed-chirho"
+
+evaluation_chirho:
+  ndcg_at_10_target_chirho: 0.85
+  mrr_target_chirho: 0.80

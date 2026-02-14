@@ -1,0 +1,29 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+simplifier_chirho:
+  model_name_chirho: "google/flan-t5-small"
+  task_chirho: "difficulty_and_simplification"
+  max_input_length_chirho: 256
+  max_target_length_chirho: 256
+  learning_rate_chirho: 3.0e-4
+  num_epochs_chirho: 7
+  batch_size_chirho: 16
+  warmup_ratio_chirho: 0.1
+  device_chirho: "auto"
+
+data_chirho:
+  sources_chirho:
+    - "ScrollMapper Bible Databases (KJV, BBE, WEB)"
+    - "Public domain translations"
+  tasks_chirho:
+    - "difficulty_scoring"
+    - "simplification"
+  max_training_examples_chirho: 160000
+  train_split_chirho: 0.8
+  val_split_chirho: 0.1
+  test_split_chirho: 0.1
+
+evaluation_chirho:
+  bleu_target_chirho: 30
+  bertscore_target_chirho: 0.85
