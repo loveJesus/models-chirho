@@ -1,0 +1,73 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+# Training configuration for intertextual reference network pipeline
+
+embedder_chirho:
+  model_name_chirho: "sentence-transformers/all-MiniLM-L12-v2"
+  embedding_dim_chirho: 384
+  learning_rate_chirho: 2.0e-5
+  num_epochs_chirho: 3
+  batch_size_chirho: 64
+  margin_chirho: 0.5  # Triplet loss margin
+  loss_function_chirho: "triplet_loss"
+  device_chirho: "mps"
+
+classifier_chirho:
+  model_name_chirho: "roberta-base"  # base not large — 7-class single-label, 30K examples
+  num_labels_chirho: 7
+  labels_chirho:
+    - "direct_quote_chirho"
+    - "allusion_chirho"
+    - "thematic_parallel_chirho"
+    - "typological_chirho"
+    - "prophecy_fulfillment_chirho"
+    - "parallel_narrative_chirho"
+    - "contrast_chirho"
+  learning_rate_chirho: 2.0e-5
+  num_epochs_chirho: 8
+  batch_size_chirho: 16
+  warmup_ratio_chirho: 0.1
+  weight_decay_chirho: 0.01
+  max_length_chirho: 256
+  early_stopping_patience_chirho: 3
+  device_chirho: "mps"
+
+data_chirho:
+  crossref_count_chirho: 344799
+  embedder_train_count_chirho: 275839  # ~80% of 344K
+  classifier_seed_count_chirho: 2000
+  classifier_target_count_chirho: 30000
+  train_split_chirho: 0.8
+  val_split_chirho: 0.1
+  test_split_chirho: 0.1
+  raw_dir_chirho: "data-chirho/raw-chirho"
+  seeds_dir_chirho: "data-chirho/seeds-chirho"
+  processed_dir_chirho: "data-chirho/processed-chirho"
+
+connection_types_chirho:
+  - name_chirho: "direct_quote"
+    description_chirho: "NT directly quotes OT (e.g., 'it is written')"
+    example_chirho: "Mt 1:23 quotes Is 7:14"
+  - name_chirho: "allusion"
+    description_chirho: "Clear reference without direct quotation"
+    example_chirho: "Rev 5:5 alludes to Gen 49:9 (Lion of Judah)"
+  - name_chirho: "thematic_parallel"
+    description_chirho: "Shared theme or motif"
+    example_chirho: "Ps 23 parallels Jn 10 (shepherd imagery)"
+  - name_chirho: "typological"
+    description_chirho: "OT type foreshadows NT antitype"
+    example_chirho: "Isaac sacrifice (Gen 22) typifies Christ's sacrifice"
+  - name_chirho: "prophecy_fulfillment"
+    description_chirho: "OT prophecy fulfilled in NT"
+    example_chirho: "Is 53 fulfilled in the Passion narratives"
+  - name_chirho: "parallel_narrative"
+    description_chirho: "Same event in parallel accounts"
+    example_chirho: "Synoptic gospel parallels (Mt/Mk/Lk)"
+  - name_chirho: "contrast"
+    description_chirho: "Deliberate theological contrast"
+    example_chirho: "Adam vs Christ in Romans 5:12-21"
+
+evaluation_chirho:
+  embedder_precision_at_10_chirho: 0.70
+  classifier_f1_macro_chirho: 0.80

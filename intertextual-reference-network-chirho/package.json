@@ -1,0 +1,16 @@
+{
+  "name": "intertextual-reference-network-chirho",
+  "version": "0.1.0",
+  "description": "Data pipeline scripts for intertextual reference network dataset",
+  "type": "module",
+  "scripts": {
+    "download-crossrefs-chirho": "bun run src-chirho/data-chirho/download-crossrefs-chirho.ts",
+    "download-kjv-chirho": "bun run src-chirho/data-chirho/download-kjv-chirho.ts",
+    "build-verse-map-chirho": "bun run src-chirho/data-chirho/build-verse-map-chirho.ts",
+    "prepare-embedder-chirho": "bun run src-chirho/data-chirho/prepare-embedder-chirho.ts",
+    "seed-classifier-chirho": "bun run src-chirho/data-chirho/seed-classifier-chirho.ts",
+    "augment-classifier-chirho": "bun run src-chirho/data-chirho/augment-classifier-chirho.ts",
+    "validate-chirho": "bun run src-chirho/data-chirho/validate-dataset-chirho.ts"
+  },
+  "dependencies": {}
+}

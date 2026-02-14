@@ -1,0 +1,44 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+[project]
+name = "intertextual-reference-network-chirho"
+version = "0.1.0"
+description = "ML-powered biblical cross-reference discovery using two-model pipeline: embedder + classifier"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "loveJesus", email = "loveJesus@perffection.com"}
+]
+
+dependencies = [
+    "transformers>=4.40",
+    "datasets>=2.19",
+    "sentence-transformers>=3.0",
+    "torch>=2.3",
+    "accelerate>=0.30",
+    "evaluate",
+    "scikit-learn",
+    "gradio>=4.0",
+    "pyyaml",
+    "safetensors",
+    "huggingface-hub>=0.23",
+    "python-dotenv",
+    "numpy",
+    "faiss-cpu",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+    "mypy",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
