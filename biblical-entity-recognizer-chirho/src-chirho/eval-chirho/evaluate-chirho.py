@@ -170,11 +170,11 @@ def compute_confusion_matrix_chirho(
 
     for true_seq_chirho, pred_seq_chirho in zip(all_true_chirho, all_pred_chirho):
         true_entities_chirho = extract_entities_chirho(
-            list(range(len(true_seq_chirho))),  # dummy tokens
+            [str(i_chirho) for i_chirho in range(len(true_seq_chirho))],  # dummy tokens as strings
             true_seq_chirho,
         )
         pred_entities_chirho = extract_entities_chirho(
-            list(range(len(pred_seq_chirho))),
+            [str(i_chirho) for i_chirho in range(len(pred_seq_chirho))],
             pred_seq_chirho,
         )
 

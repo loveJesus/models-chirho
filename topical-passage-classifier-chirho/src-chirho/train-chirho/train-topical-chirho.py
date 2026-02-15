@@ -3,7 +3,7 @@
 
 """
 train-topical-chirho.py
-Fine-tunes all-MiniLM-L6-v2 for semantic topical Bible search.
+Fine-tunes all-MiniLM-L12-v2 for semantic topical Bible search.
 
 Uses MultipleNegativesRankingLoss with in-batch negatives:
   - Each batch contains (query, positive) pairs
@@ -13,8 +13,8 @@ Uses MultipleNegativesRankingLoss with in-batch negatives:
 Training data: (topic_text, verse_text) and (verse_A, verse_B) positive pairs
 from Nave's Topical Bible and TSK cross-references.
 
-Base model: sentence-transformers/all-MiniLM-L6-v2
-  - 22M params, 384-dim embeddings, fast inference
+Base model: sentence-transformers/all-MiniLM-L12-v2
+  - 33M params, 384-dim embeddings, deeper representation
   - Pre-trained on 1B+ sentence pairs
 
 Output: models-chirho/topical-chirho/best-chirho/
@@ -125,7 +125,7 @@ def main_chirho():
         print("Using CPU")
 
     # Config
-    model_name_chirho = "sentence-transformers/all-MiniLM-L6-v2"
+    model_name_chirho = "sentence-transformers/all-MiniLM-L12-v2"
     batch_size_chirho = 64 if device_chirho == "cuda" else 16
     epochs_chirho = 5
     lr_chirho = 2e-5

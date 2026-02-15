@@ -168,9 +168,14 @@ def main_chirho():
         label2id=LABEL2ID_CHIRHO,
     )
 
-    # Load datasets
+    # Load datasets — use balanced data if available (fixes class imbalance)
     print("Loading datasets...")
-    train_dataset_chirho = load_dataset_chirho("train")
+    balanced_path_chirho = DATA_DIR_CHIRHO / "balanced-train-classifier-chirho.jsonl"
+    if balanced_path_chirho.exists():
+        print("  Using BALANCED training data (oversampled minorities, capped majority)")
+        train_dataset_chirho = load_dataset_chirho("balanced-train")
+    else:
+        train_dataset_chirho = load_dataset_chirho("train")
     val_dataset_chirho = load_dataset_chirho("val")
 
     print(f"  Train: {len(train_dataset_chirho)} examples")

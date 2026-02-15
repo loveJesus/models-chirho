@@ -3,7 +3,7 @@
 
 """
 train-simplifier-chirho.py
-Fine-tunes google/flan-t5-small for dual-task Bible processing:
+Fine-tunes google/flan-t5-base for dual-task Bible processing:
   1. Difficulty Scoring:  "rate difficulty: [verse]" -> "reading_level: X | ..."
   2. Simplification:      "simplify: [complex verse]" -> "[simplified verse]"
 
@@ -37,13 +37,13 @@ OUTPUT_DIR_CHIRHO = BASE_DIR_CHIRHO / "models-chirho" / "simplifier-chirho"
 BEST_DIR_CHIRHO = OUTPUT_DIR_CHIRHO / "best-chirho"
 
 # ─── Config ───
-MODEL_NAME_CHIRHO = "google/flan-t5-small"
+MODEL_NAME_CHIRHO = "google/flan-t5-base"
 MAX_INPUT_LENGTH_CHIRHO = 256
 MAX_TARGET_LENGTH_CHIRHO = 256
-LEARNING_RATE_CHIRHO = 3e-4
+LEARNING_RATE_CHIRHO = 2e-4
 NUM_EPOCHS_CHIRHO = 5
 WARMUP_RATIO_CHIRHO = 0.1
-BATCH_SIZE_CHIRHO = 16
+BATCH_SIZE_CHIRHO = 12
 LOGGING_STEPS_CHIRHO = 100
 
 
@@ -180,7 +180,7 @@ def main_chirho():
     """Main training function."""
     print("=" * 60)
     print("Passage Difficulty Scorer & Simplifier Training")
-    print("Flan-T5-small Multi-Task Fine-tuning")
+    print("Flan-T5-base Multi-Task Fine-tuning")
     print("=" * 60)
 
     device_chirho = detect_device_chirho()
