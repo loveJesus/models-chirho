@@ -1,0 +1,84 @@
+# For God so loved the world that he gave his only begotten Son,
+# that whoever believes in him should not perish but have eternal life. - John 3:16
+
+# Configuration for Model 9: Evangelism & Apologetics System
+
+architecture_chirho:
+  type_chirho: "hybrid_rag_with_finetuned_generator"
+  components_chirho:
+    intent_classifier_chirho:
+      model_chirho: "roberta-base"
+      categories_chirho:
+        - "evangelism_dialogue"
+        - "apologetics_qa"
+        - "creation_science"
+        - "historical_evidence"
+        - "miracle_testimony"
+    retriever_chirho:
+      model_chirho: "sentence-transformers/all-MiniLM-L12-v2"
+      embedding_dim_chirho: 384
+    generator_chirho:
+      model_chirho: "Qwen/Qwen3-4B-Instruct"
+      method_chirho: "lora"
+      lora_r_chirho: 16
+      lora_alpha_chirho: 32
+    guardrails_chirho:
+      model_chirho: "LoveJesus/theologian-classifier-chirho"
+
+corpus_chirho:
+  sources_chirho:
+    tier1_public_domain_chirho:
+      - "Spurgeon sermons (3,500+ from spurgeongems.org, CCEL, Gutenberg)"
+      - "SermonIndex.net classic preachers"
+      - "Project Gutenberg theology"
+      - "CCEL classic texts"
+      - "Apologetics Press articles"
+      - "Probe Ministries articles"
+      - "Tozer public domain works"
+    tier2_permissive_chirho:
+      - "GotQuestions HF dataset (9,530 Q&A pairs)"
+      - "Desiring God sermon transcripts (attribution required)"
+      - "Reasonable Faith debate transcripts"
+      - "Bible NLP Corpus"
+    compiled_evidence_chirho:
+      - "Creation science evidence with citations"
+      - "Historical evidence for Christianity"
+      - "Miracle testimonies (documented, peer-reviewed)"
+      - "Early Church Fathers apologetics (NO Origen)"
+    generated_chirho:
+      - "Evangelism dialogues (Living Waters style)"
+      - "Synthetic Q&A from collected corpus"
+
+  early_church_fathers_chirho:
+    included_chirho:
+      - "Justin Martyr (100-165 AD)"
+      - "Irenaeus (130-202 AD)"
+      - "Tertullian (155-220 AD)"
+      - "Athanasius (296-373 AD)"
+      - "Augustine (354-430 AD)"
+      - "Chrysostom (347-407 AD)"
+      - "Polycarp (69-155 AD)"
+      - "Clement of Rome (35-99 AD)"
+    excluded_chirho:
+      - "Origen (heterodox teachings on pre-existence of souls, universal salvation)"
+    weight_chirho: "secondary_to_scripture"
+
+training_chirho:
+  intent_classifier_chirho:
+    learning_rate_chirho: 2.0e-5
+    epochs_chirho: 5
+    batch_size_chirho: 16
+  retriever_chirho:
+    learning_rate_chirho: 2.0e-5
+    epochs_chirho: 3
+    batch_size_chirho: 32
+  generator_chirho:
+    learning_rate_chirho: 1.0e-4
+    epochs_chirho: 3
+    batch_size_chirho: 4
+    gradient_accumulation_chirho: 4
+
+evaluation_chirho:
+  target_intent_f1_chirho: 0.90
+  target_retrieval_ndcg_chirho: 0.80
+  target_generation_quality_chirho: "human_eval"

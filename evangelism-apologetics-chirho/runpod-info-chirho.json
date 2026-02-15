@@ -1,0 +1,9 @@
+{
+  "pod_id_chirho": "501jqm4qagtmfa",
+  "ip_chirho": "213.181.111.149",
+  "ssh_port_chirho": 11943,
+  "gpu_chirho": "NVIDIA H200 (150GB VRAM)",
+  "model_chirho": "Qwen/Qwen3-14B",
+  "total_steps_chirho": 1992,
+  "estimated_time_chirho": "~2.6 hours"
+}
