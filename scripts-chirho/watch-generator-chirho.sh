@@ -2,61 +2,48 @@
 # For God so loved the world that he gave his only begotten Son,
 # that whoever believes in him should not perish but have eternal life. - John 3:16
 
-# Chain script: Wait for generator on RunPod, download, upload, then retrain simplifier
-# This handles the RunPod side after the generator finishes
-
-set -e
-
-BASE_DIR_CHIRHO="/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/personal-aleluya/models-chirho"
-VENV_CHIRHO="$BASE_DIR_CHIRHO/.venv-chirho/bin/python3"
+# Watch for generator completion then run chain steps
+SSH_OPTS_CHIRHO="-o StrictHostKeyChecking=no -o ConnectTimeout=10"
 SSH_HOST_CHIRHO="213.181.111.149"
 SSH_PORT_CHIRHO="11943"
-SSH_OPTS_CHIRHO="-o StrictHostKeyChecking=no -o ConnectTimeout=10"
+REMOTE_GEN_DIR_CHIRHO="/workspace/models/generator-chirho/best-chirho"
+BASE_DIR_CHIRHO="/Volumes/ENC_4TB_WDB_CHIRHO/dev-aleluya/personal-aleluya/models-chirho"
+
 source "$BASE_DIR_CHIRHO/.env"
 
-LOCAL_GEN_DIR_CHIRHO="$BASE_DIR_CHIRHO/evangelism-apologetics-chirho/models-chirho/generator-chirho/best-chirho"
-REMOTE_GEN_DIR_CHIRHO="/workspace/models/generator-chirho/best-chirho"
-SIMPLIFIER_DATA_DIR_CHIRHO="$BASE_DIR_CHIRHO/passage-difficulty-simplifier-chirho/data-chirho/processed-chirho"
-LOCAL_SIMP_DIR_CHIRHO="$BASE_DIR_CHIRHO/passage-difficulty-simplifier-chirho/models-chirho/simplifier-chirho/best-chirho"
-
-# =============================================
-# STEP 1: Wait for generator training to complete
-# =============================================
-echo "=== Waiting for generator training on RunPod ==="
+echo "=== Watching for generator completion on RunPod ==="
 while true; do
     has_model_chirho=$(ssh $SSH_OPTS_CHIRHO -p $SSH_PORT_CHIRHO root@$SSH_HOST_CHIRHO \
-        "ls ${REMOTE_GEN_DIR_CHIRHO}/adapter_config.json 2>/dev/null && echo 'DONE'" 2>/dev/null)
-
+        "ls ${REMOTE_GEN_DIR_CHIRHO}/adapter_config.json 2>/dev/null && echo DONE" 2>/dev/null) || true
     if echo "$has_model_chirho" | grep -q "DONE"; then
         echo ""
-        echo "=== GENERATOR TRAINING COMPLETE! ==="
+        echo "=== GENERATOR TRAINING COMPLETE at $(date) ==="
         break
     fi
-
     progress_chirho=$(ssh $SSH_OPTS_CHIRHO -p $SSH_PORT_CHIRHO root@$SSH_HOST_CHIRHO \
-        'cat /proc/3868/fd/2 2>/dev/null | grep -oP "\d+/1992 \[.*?\]" | tail -1' 2>/dev/null)
-    echo -ne "\r  Generator: $progress_chirho   "
+        "tail -c 120 /workspace/train_gen_fresh.log 2>/dev/null" 2>/dev/null) || true
+    echo "  $(date): $progress_chirho"
     sleep 120
 done
 
-# =============================================
-# STEP 2: Download generator LoRA adapter
-# =============================================
-echo ""
+# Now run the full chain (it will detect generator is done immediately)
+echo "=== Starting chain-generator-simplifier ==="
+# Don't use set -e inside the chain, override by sourcing the chain steps
+cd "$BASE_DIR_CHIRHO"
+
+VENV_CHIRHO="$BASE_DIR_CHIRHO/.venv-chirho/bin/python3"
+LOCAL_GEN_DIR_CHIRHO="$BASE_DIR_CHIRHO/evangelism-apologetics-chirho/models-chirho/generator-chirho/best-chirho"
+SIMPLIFIER_DATA_DIR_CHIRHO="$BASE_DIR_CHIRHO/passage-difficulty-simplifier-chirho/data-chirho/processed-chirho"
+LOCAL_SIMP_DIR_CHIRHO="$BASE_DIR_CHIRHO/passage-difficulty-simplifier-chirho/models-chirho/simplifier-chirho/best-chirho"
+
+# Step 2: Download LoRA adapter
 echo "=== Downloading LoRA adapter ==="
 mkdir -p "$LOCAL_GEN_DIR_CHIRHO"
 scp $SSH_OPTS_CHIRHO -P $SSH_PORT_CHIRHO -r \
     "root@${SSH_HOST_CHIRHO}:${REMOTE_GEN_DIR_CHIRHO}/" "$LOCAL_GEN_DIR_CHIRHO/"
 echo "  Downloaded to: $LOCAL_GEN_DIR_CHIRHO"
 
-# Copy README
-cp "$BASE_DIR_CHIRHO/evangelism-apologetics-chirho/models-chirho/generator-chirho/README-chirho.md" \
-   "$LOCAL_GEN_DIR_CHIRHO/README.md"
-
-# =============================================
-# STEP 3: Upload generator to HuggingFace
-# =============================================
-echo ""
+# Step 3: Upload generator to HuggingFace
 echo "=== Uploading generator to HuggingFace ==="
 $VENV_CHIRHO -c "
 import os
@@ -74,10 +61,7 @@ api_chirho.upload_folder(
 print(f'  Done: https://huggingface.co/{repo_id_chirho}')
 "
 
-# =============================================
-# STEP 4: Upload simplifier data and training script to RunPod
-# =============================================
-echo ""
+# Step 4: Upload simplifier data to RunPod
 echo "=== Uploading simplifier data to RunPod ==="
 ssh $SSH_OPTS_CHIRHO -p $SSH_PORT_CHIRHO root@$SSH_HOST_CHIRHO \
     "mkdir -p /workspace/simplifier-chirho/data-chirho/processed-chirho"
@@ -89,16 +73,14 @@ for split_chirho in train-simplifier-chirho.jsonl val-simplifier-chirho.jsonl; d
         "root@${SSH_HOST_CHIRHO}:/workspace/simplifier-chirho/data-chirho/processed-chirho/$split_chirho"
 done
 
-# Upload training script
+# Step 5: Create and start simplifier training
+echo "=== Creating training script on RunPod ==="
 scp $SSH_OPTS_CHIRHO -P $SSH_PORT_CHIRHO \
-    "$BASE_DIR_CHIRHO/passage-difficulty-simplifier-chirho/src-chirho/train-chirho/train-simplifier-runpod-chirho.py" \
-    "root@${SSH_HOST_CHIRHO}:/workspace/simplifier-chirho/train-simplifier-runpod-chirho.py"
+    "$BASE_DIR_CHIRHO/scripts-chirho/chain-generator-simplifier-chirho.sh" \
+    "root@${SSH_HOST_CHIRHO}:/workspace/chain-ref.sh"
 
-# Wait, the train-simplifier-runpod-chirho.py has an embedded script inside it that it uploads.
-# Let me just use the embedded script directly
-echo "  Creating training script on RunPod..."
-
-ssh $SSH_OPTS_CHIRHO -p $SSH_PORT_CHIRHO root@$SSH_HOST_CHIRHO 'cat > /workspace/simplifier-chirho/train-chirho.py << '"'"'ENDSCRIPT'"'"'
+# Create the simplifier training script inline
+ssh $SSH_OPTS_CHIRHO -p $SSH_PORT_CHIRHO root@$SSH_HOST_CHIRHO 'cat > /workspace/simplifier-chirho/train-chirho.py' << 'ENDSCRIPT'
 #!/usr/bin/env python3
 # For God so loved the world that he gave his only begotten Son,
 # that whoever believes in him should not perish but have eternal life. - John 3:16
@@ -206,55 +188,39 @@ for k, v in ev.items():
     if k != "eval_loss": print(f"  {k}: {v}")
 print(f"\nModel saved to: {BEST_DIR_CHIRHO}")
 print("SIMPLIFIER TRAINING COMPLETE")
-ENDSCRIPT'
+ENDSCRIPT
 
-# =============================================
-# STEP 5: Start simplifier training on RunPod
-# =============================================
-echo ""
-echo "=== Starting simplifier training on RunPod ==="
+echo "=== Starting simplifier training ==="
 ssh $SSH_OPTS_CHIRHO -p $SSH_PORT_CHIRHO root@$SSH_HOST_CHIRHO \
-    "pip install -q datasets 2>/dev/null; cd /workspace/simplifier-chirho && nohup python train-chirho.py > training.log 2>&1 &"
-echo "  Training started in background"
+    "cd /workspace/simplifier-chirho && nohup python3 train-chirho.py > training.log 2>&1 &"
+echo "  Simplifier training started"
 
-# =============================================
-# STEP 6: Monitor simplifier training
-# =============================================
-echo ""
+# Step 6: Monitor simplifier
 echo "=== Monitoring simplifier training ==="
 while true; do
     done_check_chirho=$(ssh $SSH_OPTS_CHIRHO -p $SSH_PORT_CHIRHO root@$SSH_HOST_CHIRHO \
-        "grep 'SIMPLIFIER TRAINING COMPLETE' /workspace/simplifier-chirho/training.log 2>/dev/null" 2>/dev/null)
-
+        "grep 'SIMPLIFIER TRAINING COMPLETE' /workspace/simplifier-chirho/training.log 2>/dev/null" 2>/dev/null) || true
     if [ -n "$done_check_chirho" ]; then
         echo ""
         echo "=== SIMPLIFIER TRAINING COMPLETE! ==="
-        # Show final metrics
         ssh $SSH_OPTS_CHIRHO -p $SSH_PORT_CHIRHO root@$SSH_HOST_CHIRHO \
             "tail -20 /workspace/simplifier-chirho/training.log" 2>/dev/null
         break
     fi
-
     progress_chirho=$(ssh $SSH_OPTS_CHIRHO -p $SSH_PORT_CHIRHO root@$SSH_HOST_CHIRHO \
-        "tail -1 /workspace/simplifier-chirho/training.log 2>/dev/null" 2>/dev/null)
-    echo -ne "\r  Simplifier: $progress_chirho   "
+        "tail -1 /workspace/simplifier-chirho/training.log 2>/dev/null" 2>/dev/null) || true
+    echo "  $(date): Simplifier: $progress_chirho"
     sleep 120
 done
 
-# =============================================
-# STEP 7: Download retrained simplifier
-# =============================================
-echo ""
+# Step 7: Download simplifier
 echo "=== Downloading retrained simplifier ==="
 mkdir -p "$LOCAL_SIMP_DIR_CHIRHO"
 scp $SSH_OPTS_CHIRHO -P $SSH_PORT_CHIRHO -r \
     "root@${SSH_HOST_CHIRHO}:/workspace/simplifier-chirho/models-chirho/best-chirho/" "$LOCAL_SIMP_DIR_CHIRHO/"
 echo "  Downloaded to: $LOCAL_SIMP_DIR_CHIRHO"
 
-# =============================================
-# STEP 8: Upload retrained simplifier to HuggingFace
-# =============================================
-echo ""
+# Step 8: Upload simplifier to HuggingFace
 echo "=== Uploading retrained simplifier to HuggingFace ==="
 $VENV_CHIRHO -c "
 import os
@@ -272,8 +238,7 @@ print(f'  Done: https://huggingface.co/{repo_id_chirho}')
 "
 
 echo ""
-echo "=== RUNPOD CHAIN COMPLETE ==="
+echo "=== FULL CHAIN COMPLETE at $(date) ==="
 echo "  1. Generator downloaded and uploaded to HuggingFace"
 echo "  2. Simplifier retrained with flan-t5-base and uploaded to HuggingFace"
-echo ""
-echo "  Remember to terminate RunPod pod to stop billing!"
+echo "  Remember to terminate RunPod pod!"

@@ -19,6 +19,7 @@ models-chirho/*/checkpoint-*/
 **/models-chirho/*/checkpoint-*/
 dist/
 .DS_Store
+checkpoints/
 # Exclude generated dataset files but not source scripts in src-chirho/data-chirho/
 **/data-chirho/raw-chirho/
 **/data-chirho/processed-chirho/
