@@ -3,8 +3,8 @@
 
 """
 app.py - HuggingFace Space for the Passage Difficulty Scorer & Simplifier.
-Loads the fine-tuned Flan-T5-small from HuggingFace Hub and provides a Gradio
-interface with two tabs: Simplify and Difficulty.
+Loads the fine-tuned Flan-T5-base (248M params) from HuggingFace Hub and provides
+a Gradio interface with two tabs: Simplify and Difficulty.
 """
 
 import gradio as gr
@@ -24,7 +24,7 @@ device_chirho = None
 
 
 def load_model_chirho():
-    """Load the Flan-T5-small dual-task model from HuggingFace Hub."""
+    """Load the Flan-T5-base dual-task model from HuggingFace Hub."""
     global model_chirho, tokenizer_chirho, device_chirho
 
     # Device detection
@@ -167,10 +167,10 @@ def build_demo_chirho() -> gr.Blocks:
             "that whoever believes in him should not perish but have eternal life. - John 3:16*"
         )
         gr.Markdown(
-            "A fine-tuned **Flan-T5-small** model for two tasks: "
+            "A fine-tuned **Flan-T5-base** (248M params) model for two tasks: "
             "(1) assessing Bible passage reading difficulty, and "
             "(2) simplifying archaic or complex passages into plain modern English. "
-            "Trained on KJV, BBE, WEB, ASV, YLT, and Darby translations."
+            "Trained on KJV, BBE, OEB, ASV, YLT, and Darby translations."
         )
 
         with gr.Tab("Simplify"):
@@ -325,9 +325,10 @@ Converts archaic or complex Bible passages into plain modern English, trained on
 - **YLT -> WEB**: Young's Literal Translation to modern English
 
 ## Model Details
-- **Base Model**: google/flan-t5-small (60M parameters)
-- **Training**: Multi-task learning with both tasks mixed together
+- **Base Model**: google/flan-t5-base (248M parameters)
+- **Training**: Multi-task learning with both tasks, 5 epochs on NVIDIA H200
 - **Data**: ~160K examples from 6 public-domain Bible translations
+- **Eval Loss**: 2.228 | **Difficulty Accuracy**: 93.8%
 - **Source**: ScrollMapper Bible Databases (GitHub)
 
 ## Translations Used
@@ -338,13 +339,13 @@ Converts archaic or complex Bible passages into plain modern English, trained on
 | YLT (Young's Literal Translation) | Ultra-literal | Complex source |
 | Darby Bible | Literal, dated | Complex source |
 | BBE (Bible in Basic English) | 850-word vocabulary, Grade 4 | Simple target |
-| WEB (World English Bible) | Modern, public domain | Simple target |
+| OEB (Open English Bible) | Modern, public domain | Simple target |
 
 ## Limitations
 - Trained only on Bible text; may not generalize well to other domains
 - Simplification quality varies by verse length and complexity
 - Difficulty scoring is based on algorithmic features, not human annotation
-- Small model (60M params) trades accuracy for speed and accessibility
+- Simplification may occasionally alter theological nuance; always verify against original text
 
 ---
 Built with love for Jesus. Published by [loveJesus](https://huggingface.co/LoveJesus).
